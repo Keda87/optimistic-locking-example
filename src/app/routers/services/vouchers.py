@@ -6,8 +6,8 @@ from app.routers.payloads import RedeemBody
 
 
 async def redeem_voucher_logic(body: RedeemBody, user: User):
-    voucher = await Voucher.get(promo_code=body.promo_code)
     try:
+        voucher = await Voucher.get(promo_code=body.promo_code)
         if voucher.total_redeemed < voucher.quota:
             voucher.total_redeemed += 1
             await voucher.save()
@@ -17,6 +17,6 @@ async def redeem_voucher_logic(body: RedeemBody, user: User):
     except DoesNotExist:
         raise RedeemException('invalid promo code')
     except IntegrityError:
-        raise RedeemException(f'your account is already redeemed {voucher.promo_code}')
+        raise RedeemException(f'your account is already redeemed {body.promo_code}')
 
     return Voucher.get(pk=voucher.pk)
